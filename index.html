@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Linesh Jose http://linesh.com/" />
+<title>Voice Recognition Script</title>
+<style>
+body {
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	color: #000;
+	font-family: "Times, serif", "Helvetica", "Arial";
+	font-size: 15px;
+	background: #FFF;
+}
+h1 {
+	padding: 25px;
+	color: #000;
+	font-size: 21px;
+	background: #eee;
+	text-transform: uppercase;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 50px;
+}
+.clear {
+	float: none;
+	clear: both;
+}
+.button {
+	background: #217EBF;
+	padding: 5px;
+	border: none;
+	border-radius: 20px;
+	color: #fff;
+	width: 200px;
+	display: block;
+	margin: 0 auto;
+	padding: 10px;
+	font-size: 13px;
+	text-decoration: none;
+	text-transform: uppercase;
+}
+.searchbox {
+	width: 500px;
+	padding: 0;
+	margin: 70px auto;
+	
+}
+.searchbox form{
+	margin-top:20px;
+	position: relative;
+}
+.searchbox input {
+	border: 0;
+	width: 100%;
+	border: 1px solid #DDD;
+	display: inline-block;
+	outline: none;
+	padding: 13px 42px 13px 13px;
+	font-size: 15px;
+}
+.searchbox img#mic {
+	width: 30px;
+	position: absolute;
+	top: 8px;
+	right: 7px;
+	height: 30px;
+	cursor: pointer;
+}
+#spchb {
+	background-color: #fff;
+	border: 1px solid #eee;
+	border-radius: 100%;
+	bottom: 0;
+	box-shadow: 0 2px 5px rgba(0,0,0,.1);
+	cursor: pointer;
+	display: block;
+	position: relative;
+	pointer-events: none;
+	float: right;
+	width: 150px;
+	height: 150px;
+	text-align: left;
+	transition: background-color 0.218s, border 0.218s, box-shadow 0.218s;
+}
+#spchb .icon {
+	height: 73px;
+	left: 58px;
+	pointer-events: none;
+	position: absolute;
+	top: 47px;
+	width: 54px;
+	transform: scale(1);
+}
+.speech-section.active #spchb .sonar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 9999px;
+	background-color: red;
+	z-index: -1;
+	pointer-events: none;
+	animation: sonarWave 2s linear infinite
+}
+#spchb .icon ._AUb {
+	background-color: #999;
+	border-radius: 30px;
+	height: 46px;
+	left: 14px;
+	pointer-events: none;
+	position: absolute;
+	width: 24px;
+}
+#spchb .icon ._Fjd {
+	bottom: 0;
+	height: 41px;
+	left: 0px;
+	overflow: hidden;
+	pointer-events: none;
+	position: absolute;
+	width: 52px;
+}
+#spchb .icon ._oXb {
+	background-color: #999;
+	bottom: 0px;
+	height: 14px;
+	left: 22px;
+	pointer-events: none;
+	position: absolute;
+	width: 9px;
+	z-index: 1;
+}
+#spchb .icon ._dWb {
+	border: 7px solid #999;
+	border-radius: 28px;
+	bottom: 13px;
+	height: 43px;
+	pointer-events: none;
+	position: absolute;
+	width: 38px;
+	z-index: 0;
+}
+.speech-section {
+	position: fixed;
+	background: rgba(255, 255, 255, 0.81);
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	z-index: 99;
+	display: none;
+}
+.speech-section .inner {
+	position: relative;
+	margin: 11% auto;
+	width: 40%;
+	z-index: 999;
+	text-align: left;
+	padding: 0;
+}
+.speech-section h3 {
+	position: relative;
+	float: left;
+	width: 60%;
+	padding: 25px;
+	font-size: 25px;
+	font-weight: normal;
+	color: #555;
+}
+.speech-section.active #spchb .icon ._AUb, .speech-section.active #spchb .icon ._oXb {
+	background-color: red !important;
+}
+.speech-section.active #spchb .icon ._dWb {
+	border-color: red !important;
+}
+.speech-section .close{
+	position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 25px;
+    height: 25px;
+    font-weight: bold;
+    color: #9E9E9E;
+    font-size: 25px;
+	cursor:pointer;
+}
+	
+@-webkit-keyframes sonarWave {
+ from {opacity: 0.4;}
+ to {-webkit-transform: scale(3);opacity: 0;}
+}
+@-moz-keyframes sonarWave {
+ from {opacity: 0.4;}
+ to {-moz-transform: scale(3);opacity: 0;}
+}
+@keyframes sonarWave {
+ from {opacity: 0.4;}
+ to {transform: scale(3);opacity: 0;}
+}
+</style>
+<script type="text/javascript" src="./jquery.min.js"></script>
+<script>
+$(document).ready(function(e) {
+	
+	$('.speech-section .close').bind('click',function(){
+		$('.speech-section').removeClass('active').fadeOut(300);
+	});
+	
+    $('#mic').bind('click',function(){
+		
+		
+		if (window.hasOwnProperty('SpeechRecognition')){
+			var recognition = new SpeechRecognition();
+			
+		}else if (window.hasOwnProperty('webkitSpeechRecognition')){
+			var recognition = new webkitSpeechRecognition();
+			
+		}else{
+			var recognition = '';
+			alert('Speech Recognition is not enabled in this browser.');
+		}
+		if(recognition)
+		{
+			$('.speech-section').fadeIn(330).addClass('active');
+			recognition.continuous = true;
+			recognition.interimResults = true;
+			recognition.lang = "en-US";
+			recognition.start();
+			recognition.onstart = function() { 
+				$('.speech-section h3').html('Listening...');
+			}
+			recognition.onresult = function(e) {
+				recognition.stop();
+				$('.speech-section').removeClass('active');
+				$('.speech-section h3').html(e.results[0][0].transcript);	
+				$('#transcript').html(e.results[0][0].transcript);
+				setTimeout(function(){
+						$('.speech-section').fadeOut(330,function(){
+							$('#lj').submit();
+						});
+				}, 500);
+			};
+			recognition.onerror = function(e) {
+				recognition.stop();
+				if(e.error=='not-allowed'){
+					$('.speech-section h3').html('Please allow this browser to access your microphone.');	
+				}else if(e.error=='no-speech'){
+					$('.speech-section h3').html('Please check your microphone and audio levels.');	
+				}else if(e.error=='network'){
+					$('.speech-section h3').html('No Internet Connection.');	
+				}else{
+					$('.speech-section h3').html('Something went wrong. Please try again.');	
+				}
+				$('.speech-section').removeClass('active');
+				setTimeout(function(){
+					$('.speech-section').fadeOut(330,function(){
+						$('.speech-section h3').html('Speek Now.');	
+					});
+				}, 4000);
+			}
+		}
+	});
+});
+</script>
+</head>
+<body>
+<h1>Voice Recognition Script</h1>
+
+<div class="searchbox">
+<a href="http://linesh.com/" target="parent">
+	<img src="./image.png" width="190" height="36" alt="logo"></a>
+  <form id="lj" method="get" action="http://linesh.com/">
+    <input type="text" name="s" id="transcript" placeholder="" />
+    <img src="./mic.png" width="30" height="30" alt="mic"  id="mic"/>
+  </form>
+</div>
+<a href="http://linesh.com/blog/add-speech-recognition-website/" target="parent" class="button" >Download this Script</a>
+
+<div class="speech-section">
+<div class="close">X</div>
+  <div class="inner">
+    <h3>Speek Now</h3>
+    <div class="button" id="spchb">
+      <div class="sonar"></div>
+      <div class="icon"> <span class="_AUb"></span>
+        <div class="_Fjd"> <span class="_oXb"></span> <span class="_dWb"></span> </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>
+<img src="http://c.statcounter.com/10297422/0/56f7f7e7/1/" alt="free hit counter" style="border:none;">
+</body>
+</html>
